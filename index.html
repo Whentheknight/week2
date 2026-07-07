@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TODO alkalmazás</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    padding-top: 50px;
+    min-height: 100vh;
+    color: #333;
+  }
+  .container {
+    width: 100%;
+    max-width: 550px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.1);
+    padding: 20px;
+    height: fit-content;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 300;
+    text-align: center;
+    color: #e74c3c;
+    margin-bottom: 20px;
+  }
+  .new-todo {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .new-todo:focus { border-color: #e74c3c; }
+  .new-todo::placeholder { color: #bbb; font-style: italic; }
+  .todo-list { list-style: none; margin-top: 16px; }
+  .todo-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    animation: fadeIn .2s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  .todo-item:last-child { border-bottom: none; }
+  .todo-item .toggle {
+    width: 20px; height: 20px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+  }
+  .todo-item .toggle:hover { border-color: #e74c3c; }
+  .todo-item.completed .toggle {
+    background: #27ae60;
+    border-color: #27ae60;
+  }
+  .todo-item.completed .toggle::after {
+    content: '\2713';
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .todo-item .text {
+    flex: 1;
+    font-size: 16px;
+    word-break: break-word;
+  }
+  .todo-item.completed .text {
+    text-decoration: line-through;
+    color: #999;
+  }
+  .todo-item .destroy {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #ccc;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+    transition: color .2s;
+    visibility: hidden;
+  }
+  .todo-item:hover .destroy { visibility: visible; }
+  .todo-item .destroy:hover { color: #e74c3c; }
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #eee;
+    font-size: 14px;
+    color: #888;
+  }
+  .filters { display: flex; gap: 4px; }
+  .filters button {
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    padding: 3px 8px;
+    font-size: 13px;
+    cursor: pointer;
+    color: #888;
+    transition: all .2s;
+  }
+  .filters button:hover { border-color: #f5c2c0; }
+  .filters button.active { border-color: #e74c3c; color: #e74c3c; }
+  .clear-completed {
+    background: none;
+    border: none;
+    font-size: 13px;
+    color: #888;
+    cursor: pointer;
+    transition: color .2s;
+  }
+  .clear-completed:hover { color: #e74c3c; }
+  .empty-state {
+    text-align: center;
+    padding: 30px 0;
+    color: #bbb;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>todo</h1>
+  <input class="new-todo" placeholder="Mit kell elvégezni?" autofocus>
+  <ul class="todo-list"></ul>
+  <div class="footer" style="display:none">
+    <span class="todo-count"></span>
+    <div class="filters">
+      <button data-filter="all" class="active">Összes</button>
+      <button data-filter="active">Aktív</button>
+      <button data-filter="completed">Kész</button>
+    </div>
+    <button class="clear-completed">Kész törlése</button>
+  </div>
+</div>
+<script>
+const STORAGE_KEY = 'opencode_todos';
+
+let state = {
+  todos: JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'),
+  filter: 'all'
+};
+
+const todoInput = document.querySelector('.new-todo');
+const todoList = document.querySelector('.todo-list');
+const footer = document.querySelector('.footer');
+const todoCount = document.querySelector('.todo-count');
+const filterButtons = document.querySelectorAll('.filters button');
+const clearCompleted = document.querySelector('.clear-completed');
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.todos));
+}
+
+function getFilteredTodos() {
+  if (state.filter === 'active') return state.todos.filter(t => !t.completed);
+  if (state.filter === 'completed') return state.todos.filter(t => t.completed);
+  return state.todos;
+}
+
+function render() {
+  const filtered = getFilteredTodos();
+  todoList.innerHTML = '';
+  if (filtered.length === 0) {
+    todoList.innerHTML = '<li class="empty-state">Nincs megjeleníthető teendő</li>';
+  } else {
+    filtered.forEach(todo => {
+      const li = document.createElement('li');
+      li.className = 'todo-item' + (todo.completed ? ' completed' : '');
+      li.innerHTML = `
+        <div class="toggle"></div>
+        <span class="text">${escapeHtml(todo.text)}</span>
+        <button class="destroy">&times;</button>
+      `;
+      li.querySelector('.toggle').addEventListener('click', () => toggleTodo(todo.id));
+      li.querySelector('.destroy').addEventListener('click', () => destroyTodo(todo.id));
+      todoList.appendChild(li);
+    });
+  }
+
+  const activeCount = state.todos.filter(t => !t.completed).length;
+  const completedCount = state.todos.length - activeCount;
+
+  footer.style.display = state.todos.length ? '' : 'none';
+  todoCount.textContent = `${activeCount} ${activeCount === 1 ? 'teendő' : 'teendő'} hátra`;
+  clearCompleted.style.display = completedCount ? '' : 'none';
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function addTodo(text) {
+  text = text.trim();
+  if (!text) return;
+  state.todos.unshift({ id: Date.now(), text, completed: false });
+  save();
+  render();
+}
+
+function toggleTodo(id) {
+  const todo = state.todos.find(t => t.id === id);
+  if (todo) { todo.completed = !todo.completed; save(); render(); }
+}
+
+function destroyTodo(id) {
+  state.todos = state.todos.filter(t => t.id !== id);
+  save(); render();
+}
+
+todoInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') { addTodo(todoInput.value); todoInput.value = ''; }
+});
+
+filterButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.filter = btn.dataset.filter;
+    render();
+  });
+});
+
+clearCompleted.addEventListener('click', () => {
+  state.todos = state.todos.filter(t => !t.completed);
+  save(); render();
+});
+
+render();
+</script>
+</body>
+</html>
