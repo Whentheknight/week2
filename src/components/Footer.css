@@ -1,0 +1,32 @@
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+  font-size: 14px;
+  color: #888;
+}
+.filters { display: flex; gap: 4px; }
+.filters button {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 3px 8px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #888;
+  transition: all .2s;
+}
+.filters button:hover { border-color: #f5c2c0; }
+.filters button.active { border-color: #e74c3c; color: #e74c3c; }
+.clear-completed {
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: #888;
+  cursor: pointer;
+  transition: color .2s;
+}
+.clear-completed:hover { color: #e74c3c; }

@@ -1,0 +1,65 @@
+.priority-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #888;
+  flex-wrap: wrap;
+}
+
+.priority-filter {
+  position: relative;
+}
+
+.priority-filter-trigger {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 13px;
+  color: #888;
+  cursor: pointer;
+  transition: border-color .2s;
+}
+.priority-filter-trigger:hover { border-color: #e74c3c; }
+
+.priority-filter-options {
+  list-style: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+  min-width: 150px;
+  z-index: 10;
+  padding: 4px 0;
+}
+
+.priority-filter-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+}
+.priority-filter-options label:hover { background: #f5f5f5; }
+
+.priority-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.priority-sort {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
