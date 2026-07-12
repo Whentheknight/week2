@@ -1,0 +1,30 @@
+.stats {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  color: #888;
+}
+.stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.stats-row + .stats-row {
+  margin-top: 6px;
+}
+.stats-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.stats-number {
+  font-weight: 600;
+  color: #333;
+}
+.stats-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}

@@ -5,6 +5,7 @@ import TodoList from './components/TodoList.jsx';
 import Footer from './components/Footer.jsx';
 import PriorityToolbar from './components/PriorityToolbar.jsx';
 import EditTodoModal from './components/EditTodoModal.jsx';
+import Stats from './components/Stats.jsx';
 import './App.css';
 
 export default function App() {
@@ -37,6 +38,7 @@ export default function App() {
     <div className="container">
       <h1>todo</h1>
       <TodoInput onAdd={addTodo} />
+      <Stats todos={todos} />
       {todos.length > 0 && (
         <PriorityToolbar
           priorityFilter={priorityFilter}
