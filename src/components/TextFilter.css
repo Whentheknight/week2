@@ -1,0 +1,33 @@
+.text-filter {
+  position: relative;
+  margin-top: 12px;
+}
+
+.text-filter-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 32px 8px 10px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  color: #333;
+}
+.text-filter-input:focus {
+  outline: none;
+  border-color: #e74c3c;
+}
+
+.text-filter-clear {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  color: #888;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+.text-filter-clear:hover { color: #e74c3c; }

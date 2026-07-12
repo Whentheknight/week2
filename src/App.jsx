@@ -6,6 +6,7 @@ import Footer from './components/Footer.jsx';
 import PriorityToolbar from './components/PriorityToolbar.jsx';
 import EditTodoModal from './components/EditTodoModal.jsx';
 import Stats from './components/Stats.jsx';
+import TextFilter from './components/TextFilter.jsx';
 import './App.css';
 
 export default function App() {
@@ -14,11 +15,17 @@ export default function App() {
   const [priorityFilter, setPriorityFilter] = useState([]);
   const [sortByPriority, setSortByPriority] = useState(false);
   const [editingTodo, setEditingTodo] = useState(null);
+  const [textFilter, setTextFilter] = useState('');
 
   const filteredTodos = useMemo(() => {
     let result = todos;
     if (filter === 'active') result = result.filter(t => !t.completed);
     else if (filter === 'completed') result = result.filter(t => t.completed);
+
+    if (textFilter.trim()) {
+      const q = textFilter.trim().toLowerCase();
+      result = result.filter(t => t.text.toLowerCase().includes(q));
+    }
 
     if (priorityFilter.length > 0) {
       result = result.filter(t => priorityFilter.includes(t.priority));
@@ -29,7 +36,7 @@ export default function App() {
     }
 
     return result;
-  }, [todos, filter, priorityFilter, sortByPriority]);
+  }, [todos, filter, textFilter, priorityFilter, sortByPriority]);
 
   const activeCount = todos.filter(t => !t.completed).length;
   const completedCount = todos.length - activeCount;
@@ -39,6 +46,7 @@ export default function App() {
       <h1>todo</h1>
       <TodoInput onAdd={addTodo} />
       <Stats todos={todos} />
+      {todos.length > 0 && <TextFilter value={textFilter} onChange={setTextFilter} />}
       {todos.length > 0 && (
         <PriorityToolbar
           priorityFilter={priorityFilter}
